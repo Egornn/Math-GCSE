@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - GCSE Math with E{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-envelope me-2"></i>
+                    Contact Me
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">
+                    Have a math problem you'd like me to solve or need tutoring?
+                    Send me a message and I'll get back to you as soon as possible!
+                </p>
+
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-clock text-primary fa-2x mb-3"></i>
+                                <h6>Response Time</h6>
+                                <p class="mb-0 small">Usually within 24 hours</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-graduation-cap text-primary fa-2x mb-3"></i>
+                                <h6>Topics</h6>
+                                <p class="mb-0 small">All GCSE Math topics</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body text-center">
+                                <i class="fas fa-camera text-primary fa-2x mb-3"></i>
+                                <h6>Photo Upload</h6>
+                                <p class="mb-0 small">Send images of problems</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Your Name *</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                   placeholder="Enter your full name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" id="email" name="email" required
+                                   placeholder="Enter your email">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject *</label>
+                        <input type="text" class="form-control" id="subject" name="subject" required
+                               placeholder="What is this regarding?">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message *</label>
+                        <textarea class="form-control" id="message" name="message" rows="5" required
+                                  placeholder="Please describe the math problem or topic you need help with. Include any specific questions or areas where you're struggling."></textarea>
+                        <div class="form-text">
+                            Be as specific as possible about the math problem or concept you need help with.
+                        </div>
+                    </div>
+
+                    <!-- Photo Upload Section -->
+                    <div class="mb-3">
+                        <label for="problem_photo" class="form-label">Upload Photo of Math Problem (Optional)</label>
+                        <input type="file" class="form-control" id="problem_photo" name="problem_photo"
+                               accept="image/*" onchange="previewImage(event)">
+                        <div class="form-text">
+                            Upload a clear photo of the math problem. Supported formats: JPG, PNG, GIF (Max 5MB)
+                        </div>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="mb-3" id="imagePreviewContainer" style="display: none;">
+                        <label class="form-label">Image Preview</label>
+                        <div class="border rounded p-3 text-center">
+                            <img id="imagePreview" src="#" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeImage()">
+                                    <i class="fas fa-times me-1"></i>
+                                    Remove Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="urgent" name="urgent">
+                            <label class="form-check-label" for="urgent">
+                                This is urgent (e.g., exam preparation)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="reset" class="btn btn-outline-secondary me-md-2" onclick="resetForm()">
+                            <i class="fas fa-undo me-1"></i>
+                            Clear Form
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-1"></i>
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <div class="alert alert-info">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Tips for Getting the Best Help
+                    </h6>
+                    <ul class="mb-0">
+                        <li>Include the specific topic (e.g., Quadratic Equations, Trigonometry)</li>
+                        <li>Mention if it's for Foundation or Higher tier</li>
+                        <li>Describe where you're getting stuck in the problem</li>
+                        <li>Upload a clear, well-lit photo of handwritten problems</li>
+                        <li>Make sure the photo shows the entire problem clearly</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function previewImage(event) {
+    const input = event.target;
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        // Check file size (5MB limit)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size must be less than 5MB');
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        }
+
+        reader.readAsDataURL(file);
+    }
+}
+
+function removeImage() {
+    const input = document.getElementById('problem_photo');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+
+    input.value = '';
+    preview.src = '#';
+    previewContainer.style.display = 'none';
+}
+
+function resetForm() {
+    removeImage(); // Also remove image preview when form is reset
+}
+</script>
+
+<style>
+#imagePreview {
+    max-width: 100%;
+    height: auto;
+}
+
+.form-text {
+    font-size: 0.875rem;
+}
+
+.card.border-0.bg-light {
+    transition: transform 0.2s;
+}
+
+.card.border-0.bg-light:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}

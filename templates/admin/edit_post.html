@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Post - GCSE Math Solutions{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-edit me-2"></i>
+                    Edit Post
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <!-- Title -->
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Post Title *</label>
+                                <input type="text" class="form-control" id="title" name="title" required
+                                       value="{{ post.title }}"
+                                       placeholder="Enter a clear, descriptive title for your math solution">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <!-- Topic -->
+                            <div class="mb-3">
+                                <label for="topic" class="form-label">Topic *</label>
+                                <select class="form-select" id="topic" name="topic" required>
+                                    <option value="">Select a topic...</option>
+                                    <option value="algebra" {% if post.topic == 'algebra' %}selected{% endif %}>Algebra</option>
+                                    <option value="geometry" {% if post.topic == 'geometry' %}selected{% endif %}>Geometry</option>
+                                    <option value="number" {% if post.topic == 'number' %}selected{% endif %}>Number</option>
+                                    <option value="statistics" {% if post.topic == 'statistics' %}selected{% endif %}>Statistics</option>
+                                    <option value="probability" {% if post.topic == 'probability' %}selected{% endif %}>Probability</option>
+                                    <option value="calculus" {% if post.topic == 'calculus' %}selected{% endif %}>Calculus</option>
+                                    <option value="trigonometry" {% if post.topic == 'trigonometry' %}selected{% endif %}>Trigonometry</option>
+                                    <option value="functions" {% if post.topic == 'functions' %}selected{% endif %}>Functions</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Difficulty -->
+                            <div class="mb-3">
+                                <label for="difficulty" class="form-label">Difficulty Level</label>
+                                <select class="form-select" id="difficulty" name="difficulty">
+                                    <option value="">Select difficulty...</option>
+                                    <option value="foundation" {% if post.difficulty == 'foundation' %}selected{% endif %}>Foundation</option>
+                                    <option value="higher" {% if post.difficulty == 'higher' %}selected{% endif %}>Higher</option>
+                                    <option value="both" {% if post.difficulty == 'both' %}selected{% endif %}>Both (appears in all filters)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Image Upload -->
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Featured Image</label>
+                                <input type="file" class="form-control" id="image" name="image"
+                                       accept="image/*" onchange="previewImage(event)">
+                                <div class="form-text">
+                                    Upload a new image to replace the current one.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Image Preview -->
+                    {% if post.image_path %}
+                    <div class="mb-3">
+                        <label class="form-label">Current Featured Image</label>
+                        <div class="border rounded p-3 text-center bg-light">
+                            <img src="{{ url_for('static', filename='uploads/' + post.image_path) }}"
+                                 class="img-fluid rounded" style="max-height: 200px;"
+                                 alt="Current featured image">
+                            <div class="mt-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="remove_image" name="remove_image">
+                                    <label class="form-check-label text-danger" for="remove_image">
+                                        Remove current image
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- New Image Preview -->
+                    <div class="mb-3" id="imagePreviewContainer" style="display: none;">
+                        <label class="form-label">New Image Preview</label>
+                        <div class="border rounded p-3 text-center bg-light">
+                            <img id="imagePreview" src="#" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeImage()">
+                                    <i class="fas fa-times me-1"></i>
+                                    Remove New Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Editor Tools (same as create_post.html) -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-magic me-2"></i>
+                                Content Tools
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group me-2 mb-2" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="insertText('<strong>Bold Text</strong>')">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="insertText('<em>Italic Text</em>')">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="insertText('<u>Underlined Text</u>')">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                </div>
+                                <div class="btn-group me-2 mb-2" role="group">
+                                    <button type="button" class="btn btn-outline-primary" onclick="insertImageByUrl()">
+                                        <i class="fas fa-image me-1"></i>
+                                        Insert Image URL
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success" onclick="insertMathExample()">
+                                        <i class="fas fa-square-root-alt me-1"></i>
+                                        Math Example
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Quick Image URL Insert -->
+                            <div class="mt-3 p-3 border rounded bg-light" id="imageUrlForm" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label class="form-label">Image URL</label>
+                                        <input type="url" class="form-control" id="imageUrl"
+                                               placeholder="https://example.com/image.jpg">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Alt Text</label>
+                                        <input type="text" class="form-control" id="imageAlt"
+                                               placeholder="Description of image">
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-success btn-sm" onclick="insertImageFromUrl()">
+                                        <i class="fas fa-plus me-1"></i>
+                                        Insert Image
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="hideImageUrlForm()">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content *</label>
+                        <textarea class="form-control" id="content" name="content" rows="15" required
+                                  placeholder="Write your math solution here. Use clear steps and explanations...">{{ post.content }}</textarea>
+                    </div>
+
+                    <!-- Publish Options -->
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_published" name="is_published" {{ 'checked' if post.is_published }}>
+                            <label class="form-check-label" for="is_published">
+                                Publish post
+                            </label>
+                        </div>
+                        <div class="form-text">
+                            Uncheck to save as draft (not visible to students).
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="{{ url_for('manage_posts') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Back to Posts
+                            </a>
+                            <a href="{{ url_for('show_post', post_id=post.id) }}" target="_blank" class="btn btn-outline-info ms-2">
+                                <i class="fas fa-eye me-1"></i>
+                                View Post
+                            </a>
+                        </div>
+                        <div>
+                            <button type="reset" class="btn btn-outline-danger me-2">
+                                <i class="fas fa-undo me-1"></i>
+                                Reset Changes
+                            </button>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save me-1"></i>
+                                Update Post
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Image upload preview functions
+function previewImage(event) {
+    const input = event.target;
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeImage() {
+    const input = document.getElementById('image');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+
+    input.value = '';
+    preview.src = '#';
+    previewContainer.style.display = 'none';
+}
+
+// Content editor functions (same as create_post.html)
+function insertText(text) {
+    const content = document.getElementById('content');
+    const start = content.selectionStart;
+    const end = content.selectionEnd;
+    const selectedText = content.value.substring(start, end);
+
+    if (selectedText) {
+        content.value = content.value.substring(0, start) + text.replace('Text', selectedText) + content.value.substring(end);
+    } else {
+        content.value = content.value.substring(0, start) + text + content.value.substring(end);
+    }
+
+    content.focus();
+    content.setSelectionRange(start + text.length, start + text.length);
+}
+
+function insertImageByUrl() {
+    document.getElementById('imageUrlForm').style.display = 'block';
+}
+
+function hideImageUrlForm() {
+    document.getElementById('imageUrlForm').style.display = 'none';
+    document.getElementById('imageUrl').value = '';
+    document.getElementById('imageAlt').value = '';
+}
+
+function insertImageFromUrl() {
+    const url = document.getElementById('imageUrl').value;
+    const alt = document.getElementById('imageAlt').value || 'Math diagram';
+
+    if (url) {
+        const imgTag = `<img src="${url}" alt="${alt}" class="img-fluid rounded mt-2 mb-2" style="max-width: 100%; height: auto;">`;
+        insertText(imgTag);
+        hideImageUrlForm();
+    } else {
+        alert('Please enter an image URL');
+    }
+}
+
+function insertMathExample() {
+    const mathExample = `
+<div class="math-solution bg-light p-3 rounded mt-3 mb-3">
+    <h6>Example Solution:</h6>
+    <p><strong>Step 1:</strong> Write down the equation</p>
+    <p><strong>Step 2:</strong> Show your working</p>
+    <p><strong>Step 3:</strong> Present the final answer</p>
+    <div class="final-answer p-2 bg-white border rounded">
+        <strong>Answer:</strong> x = 5
+    </div>
+</div>
+`;
+    insertText(mathExample);
+}
+
+// Warn user if they try to leave with unsaved changes
+let formChanged = false;
+const form = document.querySelector('form');
+const formInputs = form.querySelectorAll('input, textarea, select');
+
+formInputs.forEach(input => {
+    input.addEventListener('input', () => {
+        formChanged = true;
+    });
+});
+
+form.addEventListener('submit', () => {
+    formChanged = false;
+});
+
+window.addEventListener('beforeunload', (e) => {
+    if (formChanged) {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+    }
+});
+</script>
+
+<style>
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+#imagePreview {
+    max-width: 100%;
+    height: auto;
+}
+
+.math-solution {
+    border-left: 4px solid #007bff;
+}
+
+.final-answer {
+    background-color: #e8f5e8 !important;
+    border-color: #28a745 !important;
+}
+
+.btn-toolbar .btn {
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}

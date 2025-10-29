@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - GCSE Math with E{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Post Content -->
+        <article class="card mb-4">
+            {% if post.image_path %}
+                <div class="post-image-container text-center mb-4">
+                    <img src="{{ url_for('static', filename='uploads/' + post.image_path) }}"
+                     class="img-fluid rounded shadow-sm"
+                     alt="{{ post.title }}">
+                </div>
+            {% endif %}
+
+            <div class="card-body">
+                <!-- Post Header -->
+                <header class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-primary">{{ post.topic|title }}</span>
+                        {% if post.difficulty %}
+                        <span class="badge bg-{{ 'success' if post.difficulty == 'foundation' else 'warning' }}">
+                            {{ post.difficulty|title }} Level
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="card-title h2">{{ post.title }}</h1>
+
+                    <div class="text-muted mb-3">
+                        <small>
+                            <i class="fas fa-calendar me-1"></i>
+                            Posted on {{ post.created_at[:10] if post.created_at is string else post.created_at.strftime('%B %d, %Y') }}
+                        </small>
+                    </div>
+                </header>
+
+                <!-- Post Content -->
+                <div class="post-content">
+                    {{ post.content|replace('\n', '<br>')|safe }}
+                </div>
+
+                <!-- Post Footer -->
+                <footer class="mt-4 pt-3 border-top">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted">
+                                <i class="fas fa-comments me-1"></i>
+                                {{ comments|length }} comment{{ 's' if comments|length != 1 }}
+                            </span>
+                        </div>
+                        <div>
+                            <button class="btn btn-outline-primary btn-sm" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i>
+                                Print Solution
+                            </button>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </article>
+
+        <!-- Comments Section -->
+        <section class="card">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-comments me-2"></i>
+                    Comments & Questions
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Comment Form -->
+                <div class="mb-4">
+                    <h6>Leave a Comment or Question</h6>
+                    <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <input type="text" class="form-control" name="author_name"
+                                       placeholder="Your name" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" name="content" rows="3"
+                                      placeholder="Ask a question or share your thoughts..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-1"></i>
+                            Post Comment
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Comments List -->
+                {% if comments %}
+                <div class="comments-list">
+                    <h6 class="mb-3">Recent Comments ({{ comments|length }})</h6>
+                    {% for comment in comments %}
+                    <div class="comment-card border-start border-primary ps-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <strong class="text-primary">{{ comment.author_name }}</strong>
+                            <small class="text-muted">
+                                {{ comment.created_at[:16] }}
+                            </small>
+                        </div>
+                        <p class="mb-0">{{ comment.content }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-comments fa-2x mb-2 d-block"></i>
+                    <p>No comments yet. Be the first to ask a question or share your thoughts!</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Related Posts -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-link me-2"></i>
+                    Related Topics
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('index', topic=post.topic) }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-folder me-2"></i>
+                        All {{ post.topic|title }} Posts
+                    </a>
+                    {% if post.difficulty %}
+                    <a href="{{ url_for('index', difficulty=post.difficulty) }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-chart-line me-2"></i>
+                        All {{ post.difficulty|title }} Level Posts
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Need Help Card -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <i class="fas fa-question-circle text-primary fa-3x mb-3"></i>
+                <h6>Still Have Questions?</h6>
+                <p class="small">If this solution didn't fully answer your question, feel free to ask for clarification in the comments or send me a direct message.</p>
+                <a href="{{ url_for('contact') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-envelope me-1"></i>
+                    Contact Me
+                </a>
+            </div>
+        </div>
+
+        <!-- Share Card -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-share-alt me-2"></i>
+                    Share This Solution
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="copyPostLink()">
+                        <i class="fas fa-link me-1"></i>
+                        Copy Link
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyPostLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(function() {
+        alert('Link copied to clipboard!');
+    }, function() {
+        alert('Failed to copy link.');
+    });
+}
+</script>
+
+<style>
+.post-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.post-content h2, .post-content h3, .post-content h4 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.post-content p {
+    margin-bottom: 1em;
+}
+
+.post-content ul, .post-content ol {
+    margin-bottom: 1em;
+    padding-left: 2em;
+}
+
+.post-content code {
+    background-color: #f8f9fa;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.post-content pre {
+    background-color: #f8f9fa;
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+.post-content blockquote {
+    border-left: 4px solid #3498db;
+    padding-left: 1em;
+    margin-left: 0;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.comment-card {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.375rem;
+}
+</style>
+{% endblock %}

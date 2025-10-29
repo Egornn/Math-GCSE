@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}About Me - GCSE Math with E{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title text-center mb-4">About Me</h1>
+
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-4 text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                            <i class="fas fa-user fa-4x"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h3 class="text-primary">Math Tutor & Educator</h3>
+                        <p class="lead">Helping students master GCSE Mathematics through clear, step-by-step solutions.</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="border-bottom pb-2">My Mission</h4>
+                    <p>
+                        I believe that every student can excel in mathematics with the right guidance and resources.
+                        My goal is to make complex mathematical concepts accessible and understandable through
+                        detailed explanations and practical examples.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="border-bottom pb-2">Teaching Approach</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                                <span>Step-by-step solutions</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                                <span>Real-world applications</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                                <span>Visual explanations</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                                <span>Practice problems</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                                <span>Exam-focused content</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-check-circle text-success me-3 fa-lg"></i>
+                                <span>Interactive learning</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="border-bottom pb-2">Topics I Cover</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="fas fa-square-root-alt text-primary me-2"></i>
+                                    Algebra
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-shapes text-primary me-2"></i>
+                                    Geometry
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-sort-numeric-up text-primary me-2"></i>
+                                    Number Theory
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="fas fa-chart-bar text-primary me-2"></i>
+                                    Statistics
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-dice text-primary me-2"></i>
+                                    Probability
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="fas fa-calculator text-primary me-2"></i>
+                                    Calculus
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="border-bottom pb-2">My Experience</h4>
+                    <p>
+                        I have experience teaching both groups and individuals. I've helped students getting ready for the exams.
+                        I specialise in breaking down complex problems into manageable steps and
+                        providing multiple way of solving a problem and the intuition behind it while building mathematical abilities.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="border-bottom pb-2">Get In Touch</h4>
+                    <p>
+                        Have questions about specific math problems? Need help with a particular topic?
+                        I'm here to help! Feel free to reach out through the
+                        <a href="{{ url_for('contact') }}" class="text-decoration-none">contact form</a>
+                        or explore the solutions I've already shared on this site.
+                    </p>
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-envelope me-2"></i>
+                            Send Me a Message
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

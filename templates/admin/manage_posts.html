@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Posts - GCSE Math Solutions{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="fas fa-edit me-2"></i>
+        Manage Posts
+    </h1>
+    <a href="{{ url_for('create_post') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i>
+        New Post
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-list me-2"></i>
+            All Posts ({{ posts|length }} total)
+        </h5>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Dashboard
+        </a>
+    </div>
+    <div class="card-body p-0">
+        {% if posts %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Topic</th>
+                        <th>Difficulty</th>
+                        <th>Status</th>
+                        <th>Comments</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <td><strong>#{{ post.id }}</strong></td>
+                        <td>
+                            <div>
+                                <strong>{{ post.title }}</strong>
+                                {% if post.image_path %}
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-image me-1"></i>
+                                    Has image
+                                </small>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary">{{ post.topic|title }}</span>
+                        </td>
+                        <td>
+                            {% if post.difficulty %}
+                            <span class="badge bg-{{ 'success' if post.difficulty == 'foundation' else 'warning' if post.difficulty == 'higher' else 'info' }}">
+                                {{ post.difficulty|title }}
+                            </span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if post.is_published %}
+                            <span class="badge bg-success">Published</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Draft</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ 'primary' if post.comment_count > 0 else 'secondary' }}">
+                                {{ post.comment_count }}
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                {{ post.created_at[:10] }}
+                            </small>
+                        </td>
+                        <td>
+                            <!-- In the actions column, replace the disabled edit button with this: -->
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('show_post', post_id=post.id) }}"
+                                   class="btn btn-outline-primary"
+                                   target="_blank"
+                                   title="View Post">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ url_for('edit_post', post_id=post.id) }}"
+                                   class="btn btn-outline-warning"
+                                   title="Edit Post">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button"
+                                        class="btn btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ post.id }}"
+                                        title="Delete Post">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal{{ post.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Confirm Deletion
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this post?</p>
+                                    <div class="alert alert-warning">
+                                        <strong>"{{ post.title }}"</strong>
+                                    </div>
+                                    <p class="text-danger">
+                                        <i class="fas fa-exclamation-circle me-1"></i>
+                                        This action cannot be undone! All comments associated with this post will also be deleted.
+                                    </p>
+                                    {% if post.comment_count > 0 %}
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-comments me-1"></i>
+                                        This post has {{ post.comment_count }} comment(s) that will be deleted.
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="fas fa-times me-1"></i>
+                                        Cancel
+                                    </button>
+                                    <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-trash me-1"></i>
+                                            Delete Post
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-edit fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">No Posts Yet</h4>
+            <p class="text-muted">Get started by creating your first post.</p>
+            <a href="{{ url_for('create_post') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>
+                Create Your First Post
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Bulk Actions -->
+{% if posts %}
+<div class="mt-3">
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-title">Quick Stats</h6>
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <span class="h5 text-primary">{{ posts|length }}</span>
+                    <br>
+                    <small class="text-muted">Total Posts</small>
+                </div>
+                <div class="col-md-3">
+                    <span class="h5 text-success">{{ posts|selectattr('is_published')|list|length }}</span>
+                    <br>
+                    <small class="text-muted">Published</small>
+                </div>
+                <div class="col-md-3">
+                    <span class="h5 text-secondary">{{ posts|rejectattr('is_published')|list|length }}</span>
+                    <br>
+                    <small class="text-muted">Drafts</small>
+                </div>
+                <div class="col-md-3">
+                    <span class="h5 text-info">{{ posts|selectattr('image_path')|list|length }}</span>
+                    <br>
+                    <small class="text-muted">With Images</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.modal-body .alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+}
+</style>
+{% endblock %}

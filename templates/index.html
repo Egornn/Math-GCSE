@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="mb-4">GCSE Math Solutions</h1>
+        <p class="lead">Step-by-step solutions and examples for GCSE Mathematics.</p>
+
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-4">
+                        <select name="topic" class="form-select">
+                            <option value="">All Topics</option>
+                            <option value="algebra" {% if topic == 'algebra' %}selected{% endif %}>Algebra</option>
+                            <option value="geometry" {% if topic == 'geometry' %}selected{% endif %}>Geometry</option>
+                            <option value="number" {% if topic == 'number' %}selected{% endif %}>Number</option>
+                            <option value="statistics" {% if topic == 'statistics' %}selected{% endif %}>Statistics</option>
+                            <option value="probability" {% if topic == 'probability' %}selected{% endif %}>Probability</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="difficulty" class="form-select">
+                            <option value="all" {% if difficulty == 'all' or not difficulty %}selected{% endif %}>All Levels</option>
+                            <option value="foundation" {% if difficulty == 'foundation' %}selected{% endif %}>Foundation</option>
+                            <option value="higher" {% if difficulty == 'higher' %}selected{% endif %}>Higher</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Posts -->
+        {% if posts %}
+            <div class="row">
+                {% for post in posts %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        {% if post.image_path %}
+                        <img src="{{ url_for('static', filename='uploads/' + post.image_path) }}"
+                             class="card-img-top" alt="{{ post.title }}"
+                             style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
+                             style="height: 200px;">
+                            <i class="fas fa-calculator fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-primary mb-2">{{ post.topic|title }}</span>
+                                {% if post.difficulty %}
+                                <span class="badge bg-{{ 'success' if post.difficulty == 'foundation' else 'warning' if post.difficulty == 'higher' else 'info' }}">
+                                    {{ post.difficulty|title }}
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <h5 class="card-title">{{ post.title }}</h5>
+
+                            <p class="card-text flex-grow-1">
+                                {% if post.content|length > 150 %}
+                                    {{ post.content[:150] }}...
+                                {% else %}
+                                    {{ post.content }}
+                                {% endif %}
+                            </p>
+
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        {{ post.created_at[:10] }}
+                                    </small>
+                                    <a href="{{ url_for('show_post', post_id=post.id) }}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        Read More <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if current_page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('index', page=current_page-1, topic=topic, difficulty=difficulty) }}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    {% for page_num in range(1, total_pages + 1) %}
+                        <li class="page-item {% if page_num == current_page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('index', page=page_num, topic=topic, difficulty=difficulty) }}">{{ page_num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if current_page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('index', page=current_page+1, topic=topic, difficulty=difficulty) }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info">
+                No posts found matching your criteria.
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>About This Site</h5>
+            </div>
+            <div class="card-body">
+                <p>Welcome to my GCSE Math Solutions blog! Here you'll find detailed solutions to various GCSE mathematics problems.</p>
+                <p>Need help with a specific topic? <a href="{{ url_for('contact') }}">Send me a message</a>!</p>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Popular Topics</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ url_for('index', topic='algebra') }}" class="btn btn-outline-primary btn-sm">Algebra</a>
+                    <a href="{{ url_for('index', topic='geometry') }}" class="btn btn-outline-primary btn-sm">Geometry</a>
+                    <a href="{{ url_for('index', topic='probability') }}" class="btn btn-outline-primary btn-sm">Probability</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
